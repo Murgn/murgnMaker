@@ -597,11 +597,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1721073631}
+  - component: {fileID: 1721073635}
+  - component: {fileID: 1721073634}
   - component: {fileID: 1721073630}
   - component: {fileID: 1721073633}
   - component: {fileID: 1721073632}
   m_Layer: 0
-  m_Name: Za Warudo
+  m_Name: World
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -628,14 +630,6 @@ MonoBehaviour:
     tilemapSize: {x: 32, y: 18}
     cameraSize: {x: 480, y: 270}
   tileMapGrid: {fileID: 1926074315}
-  floorTilemap: {fileID: 638135895}
-  wallTilemap: {fileID: 566243031}
-  playerTilemap: {fileID: 1994403971}
-  tiles:
-  - {fileID: 11400000, guid: 22341f9eb85323244856c187587467d4, type: 2}
-  - {fileID: 11400000, guid: a1368aa7cc7ffccd421f5efe64608741, type: 2}
-  - {fileID: 11400000, guid: 9276ae727f5e04d4c972d737188f0d82, type: 2}
-  - {fileID: 11400000, guid: a28c2183f5697de43b52d3bddb3c3c5e, type: 2}
 --- !u!4 &1721073631
 Transform:
   m_ObjectHideFlags: 0
@@ -676,6 +670,40 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiTilemap: {fileID: 1025058929}
+--- !u!114 &1721073634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1721073629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95faf0c76e0e93f4fa69e1efd24b012d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 11400000, guid: 56a9078552a3c49b6a77f5510cb62439, type: 2}
+  - {fileID: 11400000, guid: a1368aa7cc7ffccd421f5efe64608741, type: 2}
+  - {fileID: 11400000, guid: 9276ae727f5e04d4c972d737188f0d82, type: 2}
+  - {fileID: 11400000, guid: a28c2183f5697de43b52d3bddb3c3c5e, type: 2}
+  floorTilemap: {fileID: 638135895}
+  wallTilemap: {fileID: 566243031}
+  playerTilemap: {fileID: 1994403971}
+--- !u!114 &1721073635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1721073629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c38e254d73bd964f847ada8e35ea4c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  width: 0
+  height: 0
 --- !u!1 &1926074314
 GameObject:
   m_ObjectHideFlags: 0

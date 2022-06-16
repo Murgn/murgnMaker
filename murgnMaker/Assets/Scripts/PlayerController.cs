@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 
 namespace Murgn
@@ -17,14 +19,24 @@ namespace Murgn
     
     public class PlayerController : MonoBehaviour
     {
+        private World world;
+        private WorldRenderer worldRenderer;
         private WorldManager worldManager;
         private int width;
         private int height;
         private PlayerPosition playerPosition;
 
+        private PlayerPosition newPlayerPosition;
+        private PlayerPosition oldPlayerPosition;
+
+        private PlayerInput input;
+
         private void Awake()
         {
+            world = World.instance;
+            worldRenderer = WorldRenderer.instance;
             worldManager = WorldManager.instance;
+            input = new PlayerInput();
         }
 
         private void Update()
@@ -32,8 +44,17 @@ namespace Murgn
             PlayerMovement();
         }
 
-        private void OnEnable() => worldManager.OnMapGenerate += OnMapGenerate;
-        private void OnDisable() => worldManager.OnMapGenerate -= OnMapGenerate;
+        private void OnEnable()
+        {
+            input.Enable();
+            worldManager.OnMapGenerate += OnMapGenerate;
+        }
+
+        private void OnDisable()
+        {
+            input.Disable();
+            worldManager.OnMapGenerate -= OnMapGenerate;
+        }
 
         private void OnMapGenerate(int width, int height)
         {
@@ -44,42 +65,59 @@ namespace Murgn
             this.height = height;
             
             GeneratePlayer();
-            worldManager.DoMapResetAndRead?.Invoke();
+            worldRenderer.DoMapResetAndRead?.Invoke();
         }
 
         private void GeneratePlayer()
         {
             playerPosition = new PlayerPosition(width / 3, height / 2);
-            worldManager.worldMap.SetValue((byte)Tiles.Player, playerPosition.x, playerPosition.y);
+            world.SetValue(Tiles.Player, playerPosition.x, playerPosition.y);
         }
 
         private void PlayerMovement()
         {
-            if (Input.GetButtonDown("Vertical"))
-            { 
-                worldManager.worldMap.SetValue((byte)0, playerPosition.x, playerPosition.y);
-                if (Input.GetAxisRaw("Vertical") > 0)
-                    playerPosition.y++;
-
-                if (Input.GetAxisRaw("Vertical") < 0)
-                    playerPosition.y--;
-                
-                worldManager.worldMap.SetValue((byte)2, playerPosition.x, playerPosition.y);
-                worldManager.DoMapResetAndRead?.Invoke();
+            if (input.Player.Up.WasPerformedThisFrame() && !ColliderCheck(new Vector2Int(playerPosition.x, playerPosition.y + 1)))
+            {
+                world.SetValue(Tiles.Floor, playerPosition.x, playerPosition.y);
+                playerPosition.y++;
+                world.SetValue(Tiles.Player, playerPosition.x, playerPosition.y);
             }
             
-            if (Input.GetButtonDown("Horizontal"))
+            if (input.Player.Down.WasPerformedThisFrame() && !ColliderCheck(new Vector2Int(playerPosition.x, playerPosition.y - 1)))
             {
-                worldManager.worldMap.SetValue((byte)0, playerPosition.x, playerPosition.y);
-                if (Input.GetAxisRaw("Horizontal") > 0)
-                    playerPosition.x++;
-
-                if (Input.GetAxisRaw("Horizontal") < 0)
-                    playerPosition.x--;
-                
-                worldManager.worldMap.SetValue((byte)2, playerPosition.x, playerPosition.y);
-                worldManager.DoMapResetAndRead?.Invoke();
+                world.SetValue(Tiles.Floor, playerPosition.x, playerPosition.y);
+                playerPosition.y--;
+                world.SetValue(Tiles.Player, playerPosition.x, playerPosition.y);
             }
+
+            if (input.Player.Left.WasPerformedThisFrame() && !ColliderCheck(new Vector2Int(playerPosition.x - 1, playerPosition.y)))
+            {
+                world.SetValue(Tiles.Floor, playerPosition.x, playerPosition.y);
+                playerPosition.x--;
+                world.SetValue(Tiles.Player, playerPosition.x, playerPosition.y);
+            }
+
+            if (input.Player.Right.WasPerformedThisFrame() && !ColliderCheck(new Vector2Int(playerPosition.x + 1, playerPosition.y)))
+            {
+                world.SetValue(Tiles.Floor, playerPosition.x, playerPosition.y);
+                playerPosition.x++;
+                world.SetValue(Tiles.Player, playerPosition.x, playerPosition.y);
+            }
+            
+        }
+
+        private bool ColliderCheck(Vector2Int position)
+        {
+            bool check = !(position.x >= 1 && position.x < width - 1 && position.y >= 1 && position.y < height - 1) || world.GetValue(position) != (int)Tiles.Floor;
+
+            return check;
+        }
+        
+        private void OnGUI()
+        {
+            GUI.skin.textField.fontSize = 300;
+            GUI.TextArea(new Rect(50, 300, 100, 50), playerPosition.x.ToString());
+            GUI.TextArea(new Rect(50, 350, 100, 50), playerPosition.y.ToString());
         }
     }
 }

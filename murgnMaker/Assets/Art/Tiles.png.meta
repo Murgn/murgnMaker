@@ -116,31 +116,10 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tiles_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 8
-        height: 8
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e76793285bc1cd34eadfcb03b73a4899
-      internalID: 928638270
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: Tiles_1
       rect:
         serializedVersion: 2
-        x: 8
+        x: 0
         y: 0
         width: 8
         height: 8
@@ -161,7 +140,7 @@ TextureImporter:
       name: Tiles_2
       rect:
         serializedVersion: 2
-        x: 16
+        x: 8
         y: 0
         width: 8
         height: 8
@@ -182,7 +161,7 @@ TextureImporter:
       name: Tiles_3
       rect:
         serializedVersion: 2
-        x: 24
+        x: 16
         y: 0
         width: 8
         height: 8
@@ -203,7 +182,7 @@ TextureImporter:
       name: Tiles_4
       rect:
         serializedVersion: 2
-        x: 32
+        x: 24
         y: 0
         width: 8
         height: 8
