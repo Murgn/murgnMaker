@@ -1,8 +1,10 @@
+using System;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
+using UnityEngine.SceneManagement;
 
 namespace Murgn
 {
@@ -26,16 +28,7 @@ namespace Murgn
             worldManager = WorldManager.instance;
             cameraMain = Camera.main;
         }
-        
-        private void OnEnable() => worldManager.OnMapGenerate += OnMapGenerate;
-        private void OnDisable() => worldManager.OnMapGenerate -= OnMapGenerate;
 
-        private void OnMapGenerate(int width, int height)
-        {
-            this.width = width;
-            this.height = height;
-        }
-        
         private void Update()
         {
             SetCursor();
@@ -68,8 +61,15 @@ namespace Murgn
 
         private bool IsInMap()
         {
-            return newCursorPosition.x >= 1 && newCursorPosition.x < width - 1 && newCursorPosition.y >= 1 && newCursorPosition.y < height - 1;
+            return newCursorPosition.x >= 0 && newCursorPosition.x < world.width && newCursorPosition.y >= 0 && newCursorPosition.y < world.height;
         }
-        
+
+        private void OnGUI()
+        {
+            if (GUI.Button(new Rect(250, 50, 150, 100), "Restart"))
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
+        }
     }   
 }

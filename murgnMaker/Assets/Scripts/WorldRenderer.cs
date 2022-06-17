@@ -18,10 +18,6 @@ namespace Murgn
         [SerializeField] private Tilemap floorTilemap;
         [SerializeField] private Tilemap wallTilemap;
         [SerializeField] private Tilemap playerTilemap;
-        
-        public Action DoMapReset;
-        public Action DoMapRead;
-        public Action DoMapResetAndRead;
 
         private World world;
 
@@ -32,16 +28,20 @@ namespace Murgn
         
         private void OnEnable()
         {
-            DoMapReset += ResetMap;
-            DoMapRead += ReadMap;
-            DoMapResetAndRead += ResetAndReadMap;
+            EventManager.DoMapReset += ResetMap;
+            EventManager.DoMapResetWalls += ResetWalls;
+            EventManager.DoMapRead += ReadMap;
+            EventManager.DoMapResetAndRead += ResetAndReadMap;
+            EventManager.GenerateWalls += GenerateWalls;
         }
 
         private void OnDisable()
         {
-            DoMapReset -= ResetMap;
-            DoMapRead -= ReadMap;
-            DoMapResetAndRead -= ResetAndReadMap;
+            EventManager.DoMapReset -= ResetMap;
+            EventManager.DoMapResetWalls -= ResetWalls;
+            EventManager.DoMapRead -= ReadMap;
+            EventManager.DoMapResetAndRead -= ResetAndReadMap;
+            EventManager.GenerateWalls -= GenerateWalls;
         }
 
         private void ResetAndReadMap()
@@ -53,14 +53,43 @@ namespace Murgn
         private void ResetMap()
         {
             // Resets the Tilemap
-            for (int x = 0; x < world.width; x++)
+            for (int x = 1; x < world.width; x++)
             {
-                for (int y = 0; y < world.height; y++)
+                for (int y = 1; y < world.height; y++)
                 {
                     floorTilemap.SetTile(new Vector3Int(x, y), null);
                     wallTilemap.SetTile(new Vector3Int(x, y), null);
                     playerTilemap.SetTile(new Vector3Int(x, y), null);
                 }
+            }
+        }
+
+        private void ResetWalls()
+        {
+            // Resets the Walls
+            for (int x = -1; x <= world.width; x++)
+            {
+                for (int y = -1; y <= world.height; y++)
+                {
+                    floorTilemap.SetTile(new Vector3Int(x, y), null);
+                    wallTilemap.SetTile(new Vector3Int(x, y), null);
+                }
+            }
+        }
+
+        private void GenerateWalls()
+        {
+            // Generates Walls
+            for (int x = -1; x <= world.width; x++)
+            {
+                SetValue((int)Tiles.Wall, x, -1);
+                SetValue((int)Tiles.Wall, x, world.height);
+            }
+            
+            for (int y = 0; y < world.height; y++)
+            {
+                SetValue((int)Tiles.Wall, -1, y);
+                SetValue((int)Tiles.Wall, world.width, y);
             }
         }
 

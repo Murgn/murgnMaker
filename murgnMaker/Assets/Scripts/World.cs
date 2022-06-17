@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Murgn
@@ -26,6 +27,11 @@ namespace Murgn
             
             map.SetValue(_value, x, y);
             worldRenderer.SetValue(_value, x, y);
+        }
+
+        public void ResetMap()
+        {
+            map = new byte[width, height];
         }
         
         public int GetValue(int x, int y)

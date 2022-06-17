@@ -47,13 +47,14 @@ namespace Murgn
         private void OnEnable()
         {
             input.Enable();
-            worldManager.OnMapGenerate += OnMapGenerate;
+            EventManager.OnMapGenerate += OnMapGenerate;
+            EventManager.SetPlayerPosition += SetPosition;
         }
 
         private void OnDisable()
         {
             input.Disable();
-            worldManager.OnMapGenerate -= OnMapGenerate;
+            EventManager.OnMapGenerate -= OnMapGenerate;
         }
 
         private void OnMapGenerate(int width, int height)
@@ -65,7 +66,7 @@ namespace Murgn
             this.height = height;
             
             GeneratePlayer();
-            worldRenderer.DoMapResetAndRead?.Invoke();
+            EventManager.DoMapResetAndRead?.Invoke();
         }
 
         private void GeneratePlayer()
@@ -108,16 +109,18 @@ namespace Murgn
 
         private bool ColliderCheck(Vector2Int position)
         {
-            bool check = !(position.x >= 1 && position.x < width - 1 && position.y >= 1 && position.y < height - 1) || world.GetValue(position) != (int)Tiles.Floor;
+            bool check = !(position.x >= 0 && position.x < width && position.y >= 0 && position.y < height) || world.GetValue(position) != (int)Tiles.Floor;
 
+            if(check)
+                EventManager.DoScreenShake.Invoke(0.05f, 0.0f, 0.1f);
+            
             return check;
         }
         
-        private void OnGUI()
+        private void SetPosition(int x, int y)
         {
-            GUI.skin.textField.fontSize = 300;
-            GUI.TextArea(new Rect(50, 300, 100, 50), playerPosition.x.ToString());
-            GUI.TextArea(new Rect(50, 350, 100, 50), playerPosition.y.ToString());
+            playerPosition.x = x;
+            playerPosition.y = y;
         }
     }
 }
