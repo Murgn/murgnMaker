@@ -33,8 +33,12 @@ namespace Murgn
             if (Mouse.current.scroll.ReadValue().y < 0)
                 scrollMultiplier++;
 
-            scrollMultiplier = Mathf.Clamp(scrollMultiplier, 8, 32);
-            mainCamera.orthographicSize = scrollMultiplier;
+            // scrollMultiplier = Mathf.Clamp(scrollMultiplier, 8, 32);
+            // mainCamera.orthographicSize = scrollMultiplier;
+            
+            scrollMultiplier = Mathf.Clamp(scrollMultiplier, 8, 16);
+            mainCamera.fieldOfView = scrollMultiplier * 10;
+            // mainCamera.orthographicSize = scrollMultiplier;
             
             // ppc.refResolutionX = 16 * scrollMultiplier;
             // ppc.refResolutionY = 9 * scrollMultiplier;

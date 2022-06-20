@@ -14,5 +14,7 @@ namespace Murgn
         public static Action DoMapRead;
         public static Action DoMapResetAndRead;
         public static Action GenerateWalls;
+
+        public static Action OnGoButtonPress;
     }   
 }

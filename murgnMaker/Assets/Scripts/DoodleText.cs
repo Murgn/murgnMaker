@@ -2,6 +2,7 @@
 
 namespace Murgn
 {
+    [ExecuteInEditMode]
     public class DoodleText : MonoBehaviour
     {
         [SerializeField] private Material mat;

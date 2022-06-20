@@ -10,6 +10,10 @@ namespace Murgn
 {
     public class UIManager : MonoBehaviour
 	{
+        [Header("Cursor")]
+        [SerializeField] private Transform cursor;
+
+        [Header("Tilemap")]
         [SerializeField] private Tilemap uiTilemap;
         private World world;
         private WorldRenderer worldRenderer;
@@ -37,15 +41,35 @@ namespace Murgn
 
         private void SetCursor()
         {
-            newCursorPosition = uiTilemap.WorldToCell(cameraMain.ScreenToWorldPoint(Mouse.current.position.ReadValue()));
+            if (worldManager.gameState == GameStates.Playing)
+            {
+                Vector3 mousePos = Mouse.current.position.ReadValue();
+                mousePos.z = 10;
+                newCursorPosition = uiTilemap.WorldToCell(cameraMain.ScreenToWorldPoint(mousePos));
+                if (IsInMap())
+                {
+                    if (oldCursorPosition != newCursorPosition)
+                    {
+                        uiTilemap.SetTile(oldCursorPosition, null);
+                        uiTilemap.SetTile(newCursorPosition, worldRenderer.tiles[(int)Tiles.Cursor]);
+                    }
 
-            if (oldCursorPosition != newCursorPosition)
+                    oldCursorPosition = newCursorPosition;
+                    
+                    cursor.gameObject.SetActive(false);
+                }
+                else
+                {
+                    cursor.gameObject.SetActive(true);
+                    uiTilemap.SetTile(oldCursorPosition, null);
+                    oldCursorPosition = newCursorPosition + Vector3Int.one;
+                }
+            }
+            else
             {
                 uiTilemap.SetTile(oldCursorPosition, null);
-                uiTilemap.SetTile(newCursorPosition, worldRenderer.tiles[(int)Tiles.Cursor]);
             }
-
-            oldCursorPosition = newCursorPosition;
+            cursor.position = Mouse.current.position.ReadValue();
         }
 
         private void CursorPlace()

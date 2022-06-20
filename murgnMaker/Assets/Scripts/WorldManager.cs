@@ -6,23 +6,21 @@ using UnityEngine.U2D;
 
 namespace Murgn
 {
-    [System.Serializable]
-    public struct TilemapSettings
+    public enum GameStates
     {
-        public string settingName;
-        public Vector2Int tilemapSize;
-        public Vector2Int cameraSize;
+        Menu,
+        Playing
     }
 
     public class WorldManager : Singleton<WorldManager>
 	{
         [SerializeField] private int selectedSize;
         
-        [NonReorderable] [SerializeField] private TilemapSettings[] tilemapSettings;
-        
         [SerializeField] private Transform tileMapGrid;
         
         private World world;
+
+        public GameStates gameState;
 
         private new void Awake()
         {
@@ -32,11 +30,18 @@ namespace Murgn
         private void OnEnable()
         {
             EventManager.DoMapGenerate += GenerateMap;
+            EventManager.OnGoButtonPress += OnGoButtonPress;
         }
 
         private void OnDisable()
         {
             EventManager.DoMapGenerate -= GenerateMap;
+            EventManager.OnGoButtonPress -= OnGoButtonPress;
+        }
+
+        private void OnGoButtonPress()
+        {
+            gameState = GameStates.Playing;
         }
 
         private void GenerateMap(int x, int y)
@@ -47,7 +52,7 @@ namespace Murgn
             world.width = world.map.GetLength(0);
             world.height = world.map.GetLength(1);
 
-            var offset = new Vector2(-x / 2.0f, -y / 2.0f);
+            Vector2 offset = new Vector2(-x / 2.0f, -y / 2.0f);
             tileMapGrid.position = offset;
 
             EventManager.GenerateWalls?.Invoke();
@@ -101,7 +106,7 @@ namespace Murgn
             world.width = world.map.GetLength(0);
             world.height = world.map.GetLength(1);
             
-            var offset = new Vector2(-world.width / 2.0f, -world.height / 2.0f);
+            Vector2 offset = new Vector2(-world.width / 2.0f, -world.height / 2.0f);
             tileMapGrid.position = offset;
             
             EventManager.GenerateWalls?.Invoke();
