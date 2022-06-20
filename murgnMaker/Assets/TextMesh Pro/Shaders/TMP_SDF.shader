@@ -82,6 +82,12 @@ Properties {
 
 	_CullMode			("Cull Mode", Float) = 0
 	_ColorMask			("Color Mask", Float) = 15
+	
+	// Add properties
+	_DoodleMaxOffset("Doodle Max Offset", vector) = (0.005, 0.005, 0, 0)
+	_DoodleFrameTime("Doodle Frame Time", Float) = 0.05
+	_DoodleFrameCount("Doodle Frame Count", Int) = 12
+	_DoodleNoiseScale("Doodle Noise Scale", vector) = (2, 2, 1, 1)
 }
 
 SubShader {
@@ -122,10 +128,13 @@ SubShader {
 		#pragma multi_compile __ UNITY_UI_CLIP_RECT
 		#pragma multi_compile __ UNITY_UI_ALPHACLIP
 
+		#pragma multi_compile __ DOODLE_ON
+
 		#include "UnityCG.cginc"
 		#include "UnityUI.cginc"
 		#include "TMPro_Properties.cginc"
 		#include "TMPro.cginc"
+		#include "Assets/Shader/UtilsCG.cginc"
 
 		struct vertex_t {
 			UNITY_VERTEX_INPUT_INSTANCE_ID
@@ -233,11 +242,24 @@ SubShader {
 		}
 
 
+		// Add identifiers
+		float2 _DoodleMaxOffset;	// How far the UV can be distorted
+		float _DoodleFrameTime;		// How long does a frame last
+		int _DoodleFrameCount;		// How many frames per animation
+		float2 _DoodleNoiseScale;	// How noisy should the effect be
+
 		fixed4 PixShader(pixel_t input) : SV_Target
 		{
 			UNITY_SETUP_INSTANCE_ID(input);
 
-			float c = tex2D(_MainTex, input.atlas).a;
+			// Add doodle code
+			float2 uvOffset = 0.0;
+
+		#ifdef DOODLE_ON
+			uvOffset = DoodleTextureOffset(input.atlas, _DoodleMaxOffset, _Time.y, _DoodleFrameTime, _DoodleFrameCount, _DoodleNoiseScale);
+		#endif
+			
+		float c = tex2D(_MainTex, input.atlas + uvOffset).a;
 
 		#ifndef UNDERLAY_ON
 			clip(c - input.param.x);
@@ -281,12 +303,12 @@ SubShader {
 		#endif
 
 		#if UNDERLAY_ON
-			float d = tex2D(_MainTex, input.texcoord2.xy).a * input.texcoord2.z;
+			float d = tex2D(_MainTex, input.texcoord2.xy + uvOffset).a * input.texcoord2.z;
 			faceColor += input.underlayColor * saturate(d - input.texcoord2.w) * (1 - faceColor.a);
 		#endif
 
 		#if UNDERLAY_INNER
-			float d = tex2D(_MainTex, input.texcoord2.xy).a * input.texcoord2.z;
+			float d = tex2D(_MainTex, input.texcoord2.xy + uvOffset).a * input.texcoord2.z;
 			faceColor += input.underlayColor * (1 - saturate(d - input.texcoord2.w)) * saturate(1 - sd) * (1 - faceColor.a);
 		#endif
 

@@ -2636,6 +2636,8 @@ Material:
     - _ColorMask: 15
     - _CullMode: 0
     - _Diffuse: 0.5
+    - _DoodleFrameCount: 8
+    - _DoodleFrameTime: 0.4
     - _FaceDilate: 0
     - _FaceUVSpeedX: 0
     - _FaceUVSpeedY: 0
@@ -2678,6 +2680,8 @@ Material:
     - _WeightNormal: 0
     m_Colors:
     - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
+    - _DoodleMaxOffset: {r: 0.00125, g: 0.00125, b: 0, a: 0}
+    - _DoodleNoiseScale: {r: 30, g: 30, b: 0, a: 0}
     - _EnvMatrixRotation: {r: 0, g: 0, b: 0, a: 0}
     - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
     - _GlowColor: {r: 0, g: 1, b: 0, a: 0.5}
