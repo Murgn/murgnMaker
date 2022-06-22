@@ -12,6 +12,10 @@ namespace Murgn
     public class UIManager : MonoBehaviour
 	{
         private PlayerInput input;
+        private World world;
+        private WorldRenderer worldRenderer;
+        private WorldManager worldManager;
+        private Camera cameraMain;
 
         [Header("Canvases")] 
         [SerializeField] private GameObject menuCanvas;
@@ -23,10 +27,6 @@ namespace Murgn
 
         [Header("Tilemap")]
         [SerializeField] private Tilemap uiTilemap;
-        private World world;
-        private WorldRenderer worldRenderer;
-        private WorldManager worldManager;
-        private Camera cameraMain;
 
         private Vector3Int newCursorPosition;
         private Vector3Int oldCursorPosition;
@@ -118,12 +118,12 @@ namespace Murgn
             if (!IsInMap()) return;
 
             if (Mouse.current.leftButton.isPressed)
-                world.SetValue(currentTile, newCursorPosition.x, newCursorPosition.y);
+                TilePlacer(currentTile, newCursorPosition.x, newCursorPosition.y);
 
             if (Mouse.current.rightButton.isPressed)
-                world.SetValue(Tiles.Floor, newCursorPosition.x, newCursorPosition.y);
+                TileDeleter(newCursorPosition.x, newCursorPosition.y);
         }
-
+        
         private bool IsInMap()
         {
             return newCursorPosition.x >= 0 && newCursorPosition.x < world.width && newCursorPosition.y >= 0 && newCursorPosition.y < world.height;
@@ -133,6 +133,59 @@ namespace Murgn
         
         #region TileController
 
+        private void TilePlacer(Tiles tile, int x, int y)
+        {
+            switch (tile)
+            {
+                case Tiles.Wall:
+                    world.SetValue(tile, x, y);
+                    break;
+                
+                case Tiles.Player:
+                    EventManager.EnablePlayer?.Invoke();
+                    EventManager.SetPlayerPosition?.Invoke(x, y);
+                    break;
+                
+                case Tiles.Enemy:
+                    world.SetValue(tile, x, y);
+                    break;
+                
+                case Tiles.Key:
+                    world.SetValue(tile, x, y);
+                    break;
+                
+                case Tiles.Exit:
+                    world.SetValue(tile, x, y);
+                    break;
+            }
+        }
+
+        private void TileDeleter(int x, int y)
+        {
+            switch (world.GetValue(x, y))
+            {
+                case (int)Tiles.Wall:
+                    world.SetValue(Tiles.Floor, x, y);
+                    break;
+                
+                case (int)Tiles.Player:
+                    EventManager.DisablePlayer?.Invoke();
+                    break;
+                
+                case (int)Tiles.Enemy:
+                    world.SetValue(Tiles.Floor, x, y);
+                    break;
+                
+                case (int)Tiles.Key:
+                    world.SetValue(Tiles.Floor, x, y);
+                    break;
+                
+                case (int)Tiles.Exit:
+                    world.SetValue(Tiles.Floor, x, y);
+                    break;
+            }
+        }
+        
         private void TileSelector()
         {
             if (input.Menu.SelectTile1.WasPerformedThisFrame())
@@ -196,23 +249,35 @@ namespace Murgn
         #endregion
 
         private void DebugFunctions()
-        {
+        { 
+            // Debug Functions
             if (worldManager.gameState == GameStates.Playing)
             {
-                // Debug Functions
-            
                 if(input.Debug.Restart.WasPerformedThisFrame())
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                    Restart();
 
                 if (input.Debug.Copy.WasPerformedThisFrame())
-                {
-                    EventManager.DoMapClipboardCopy?.Invoke();
-                    EventManager.DoMapResetAndRead?.Invoke();
-                }
+                    Copy();
             
                 if(input.Debug.Load.WasPerformedThisFrame())
-                    EventManager.DoMapClipboardRead?.Invoke(GUIUtility.systemCopyBuffer);
+                    Load();
             }
+        }
+        
+        public void Restart()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        public void Copy()
+        {
+            EventManager.DoMapClipboardCopy?.Invoke();
+            EventManager.DoMapResetAndRead?.Invoke(); 
+        }
+
+        public void Load()
+        {
+            EventManager.DoMapClipboardRead?.Invoke(GUIUtility.systemCopyBuffer);
         }
         
     }   

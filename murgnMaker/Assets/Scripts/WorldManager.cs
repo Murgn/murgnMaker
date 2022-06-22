@@ -111,10 +111,13 @@ namespace Murgn
                 for (int y = 0; y < world.height; y++)
                 {
                     world.SetValue((byte)intMap[pos], x, y);
-                    
-                    if(intMap[pos] == 2)
+
+                    if (intMap[pos] == 2)
+                    {
+                        EventManager.EnablePlayer?.Invoke();
                         EventManager.SetPlayerPosition?.Invoke(x, y);
-                    
+                    }
+
                     pos++;
                 }
             }

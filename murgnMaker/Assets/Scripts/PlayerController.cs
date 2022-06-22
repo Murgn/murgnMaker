@@ -17,7 +17,7 @@ namespace Murgn
         }
     }
     
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : Singleton<PlayerController>
     {
         private World world;
         private WorldRenderer worldRenderer;
@@ -31,7 +31,9 @@ namespace Murgn
 
         private PlayerInput input;
 
-        private void Awake()
+        private bool playerEnabled;
+
+        private new void Awake()
         {
             world = World.instance;
             worldRenderer = WorldRenderer.instance;
@@ -41,38 +43,48 @@ namespace Murgn
 
         private void Update()
         {
-            PlayerMovement();
+            if(playerEnabled)
+                PlayerMovement();
         }
 
+        #region Enable/Disable
+        
         private void OnEnable()
         {
             input.Enable();
             EventManager.OnMapGenerate += OnMapGenerate;
             EventManager.SetPlayerPosition += SetPosition;
+            EventManager.EnablePlayer += EnablePlayer;
+            EventManager.DisablePlayer += DisablePlayer;
         }
+
 
         private void OnDisable()
         {
             input.Disable();
             EventManager.OnMapGenerate -= OnMapGenerate;
+            EventManager.SetPlayerPosition -= SetPosition;
+            EventManager.EnablePlayer -= EnablePlayer;
+            EventManager.DisablePlayer -= DisablePlayer;
+        }
+        
+        #endregion
+
+        private void EnablePlayer()
+        {
+            playerEnabled = true;
         }
 
+        private void DisablePlayer()
+        {
+            playerEnabled = false;
+            world.SetValue(Tiles.Floor, playerPosition.x, playerPosition.y);
+        }
+        
         private void OnMapGenerate(int width, int height)
         {
-            /// I should probably get a reference to the worldMap instead and just set WorldManager
-            /// worldMap to the player worldMap when im done doing what I need
-            
             this.width = width;
             this.height = height;
-            
-            GeneratePlayer();
-            EventManager.DoMapResetAndRead?.Invoke();
-        }
-
-        private void GeneratePlayer()
-        {
-            playerPosition = new PlayerPosition(width / 3, height / 2);
-            world.SetValue(Tiles.Player, playerPosition.x, playerPosition.y);
         }
 
         private void PlayerMovement()
@@ -119,8 +131,11 @@ namespace Murgn
         
         private void SetPosition(int x, int y)
         {
+            Debug.Log(string.Format("Setting Position To: {0}, {1}", x, y));
+            world.SetValue(Tiles.Floor, playerPosition.x, playerPosition.y);
             playerPosition.x = x;
             playerPosition.y = y;
+            world.SetValue(Tiles.Player, playerPosition.x, playerPosition.y);
         }
     }
 }

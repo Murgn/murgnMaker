@@ -10,14 +10,12 @@ namespace Murgn
     public class CameraController : MonoBehaviour
     {
         private PixelPerfectCamera ppc;
-        private Camera mainCamera;
-
-        private int scrollMultiplier = 8;
+        [SerializeField] private Vector2[] cameraResolutions;
+        private int currentResolution;
 
         private void Start()
         {
             ppc = GetComponent<PixelPerfectCamera>();
-            mainCamera = GetComponent<Camera>();
         }
 
         private void OnEnable()
@@ -32,23 +30,25 @@ namespace Murgn
 
         private void Update()
         {
+            ResolutionScroll();
+        }
+
+        private void ResolutionScroll()
+        {
             if (Mouse.current.scroll.ReadValue().y > 0)
-                scrollMultiplier--;
+                currentResolution--;
             
             if (Mouse.current.scroll.ReadValue().y < 0)
-                scrollMultiplier++;
+                currentResolution++;
 
-            // scrollMultiplier = Mathf.Clamp(scrollMultiplier, 8, 32);
-            // mainCamera.orthographicSize = scrollMultiplier;
-            
-            scrollMultiplier = Mathf.Clamp(scrollMultiplier, 8, 16);
-            mainCamera.fieldOfView = scrollMultiplier * 10;
-            // mainCamera.orthographicSize = scrollMultiplier;
-            
-            // ppc.refResolutionX = 16 * scrollMultiplier;
-            // ppc.refResolutionY = 9 * scrollMultiplier;
-            // Mathf.Clamp(scrollMultiplier, 15, 30);
+            if (currentResolution < 0)
+                currentResolution = 0;
 
+            if (currentResolution > cameraResolutions.Length - 1)
+                currentResolution = cameraResolutions.Length - 1;
+
+            ppc.refResolutionX = (int)cameraResolutions[currentResolution].x;
+            ppc.refResolutionY = (int)cameraResolutions[currentResolution].y;
         }
 
         private void ScreenShake(float magnitude, float rotation, float duration)

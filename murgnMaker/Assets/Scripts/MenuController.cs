@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Composites;
 
@@ -33,7 +33,7 @@ namespace Murgn
         private void Update()
         { 
             ButtonCheckers();
-            FpsCounter();
+            FpsCounter();            
         }
 
         private void ButtonCheckers()
@@ -74,6 +74,5 @@ namespace Murgn
             EventManager.OnGoButtonPress?.Invoke();
             EventManager.DoMapClipboardRead?.Invoke(levelCodeInput.text);
         }
-        
     }   
 }
