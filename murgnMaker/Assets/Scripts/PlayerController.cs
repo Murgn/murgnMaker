@@ -112,7 +112,7 @@ namespace Murgn
             bool check = !(position.x >= 0 && position.x < width && position.y >= 0 && position.y < height) || world.GetValue(position) != (int)Tiles.Floor;
 
             if(check)
-                EventManager.DoScreenShake.Invoke(0.05f, 0.0f, 0.1f);
+                EventManager.DoScreenShake?.Invoke(0.05f, 0.0f, 0.1f);
             
             return check;
         }

@@ -24,6 +24,11 @@ namespace Murgn
         {
             EventManager.DoScreenShake += ScreenShake;
         }
+        
+        private void OnDisable()
+        {
+            EventManager.DoScreenShake -= ScreenShake;
+        }
 
         private void Update()
         {

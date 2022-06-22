@@ -13,8 +13,11 @@ namespace Murgn
         public static Action DoMapResetWalls;
         public static Action DoMapRead;
         public static Action DoMapResetAndRead;
+        public static Action DoMapClipboardCopy;
+        public static Action<string> DoMapClipboardRead;
         public static Action GenerateWalls;
 
         public static Action OnGoButtonPress;
+
     }   
 }

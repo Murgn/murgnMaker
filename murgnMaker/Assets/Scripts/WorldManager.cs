@@ -14,8 +14,6 @@ namespace Murgn
 
     public class WorldManager : Singleton<WorldManager>
 	{
-        [SerializeField] private int selectedSize;
-        
         [SerializeField] private Transform tileMapGrid;
         
         private World world;
@@ -27,18 +25,26 @@ namespace Murgn
             world = World.instance;
         }
 
+        #region Enable/Disable
+        
         private void OnEnable()
         {
             EventManager.DoMapGenerate += GenerateMap;
             EventManager.OnGoButtonPress += OnGoButtonPress;
+            EventManager.DoMapClipboardCopy += CopyMapToClipboard;
+            EventManager.DoMapClipboardRead += ReadClipboardToMap;
         }
 
         private void OnDisable()
         {
             EventManager.DoMapGenerate -= GenerateMap;
             EventManager.OnGoButtonPress -= OnGoButtonPress;
+            EventManager.DoMapClipboardCopy -= CopyMapToClipboard;
+            EventManager.DoMapClipboardRead -= ReadClipboardToMap;
         }
 
+        #endregion
+        
         private void OnGoButtonPress()
         {
             gameState = GameStates.Playing;
@@ -61,20 +67,6 @@ namespace Murgn
             EventManager.DoMapResetAndRead?.Invoke();
         }
 
-        private void OnGUI()
-        {
-            if (GUI.Button(new Rect(150, 50, 100, 100), "Read"))
-            {
-                ReadClipboardToMap();
-                EventManager.DoMapResetAndRead?.Invoke();
-            }
-
-            if (GUI.Button(new Rect(150, 150, 100, 100), "Copy"))
-            {
-                CopyMapToClipboard();
-            }
-        }
-
         private void CopyMapToClipboard()
         {
             string mapString = string.Empty;
@@ -94,12 +86,12 @@ namespace Murgn
             GUIUtility.systemCopyBuffer = mapString;
         }
 
-        private void ReadClipboardToMap()
+        private void ReadClipboardToMap(string levelCode)
         {
             EventManager.DoMapReset?.Invoke();
             world.ResetMap();
             // Player needs to be told where to spawn from the clipboard
-            string[] clipboard = GUIUtility.systemCopyBuffer.Split('/');
+            string[] clipboard = levelCode.Split('/');
 
             world.map = new byte[int.Parse(clipboard[0]), int.Parse(clipboard[1])];
             EventManager.DoMapResetWalls?.Invoke();

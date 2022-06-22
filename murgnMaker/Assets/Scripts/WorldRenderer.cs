@@ -9,6 +9,9 @@ namespace Murgn
         Floor,
         Wall,
         Player,
+        Enemy,
+        Key,
+        Exit,
         Cursor,
     }
     
@@ -17,7 +20,7 @@ namespace Murgn
         public TileBase[] tiles;
         [SerializeField] private Tilemap floorTilemap;
         [SerializeField] private Tilemap wallTilemap;
-        [SerializeField] private Tilemap playerTilemap;
+        [SerializeField] private Tilemap entityTilemap;
 
         private World world;
 
@@ -59,7 +62,7 @@ namespace Murgn
                 {
                     floorTilemap.SetTile(new Vector3Int(x, y), null);
                     wallTilemap.SetTile(new Vector3Int(x, y), null);
-                    playerTilemap.SetTile(new Vector3Int(x, y), null);
+                    entityTilemap.SetTile(new Vector3Int(x, y), null);
                 }
             }
         }
@@ -112,7 +115,7 @@ namespace Murgn
                 case (int)Tiles.Floor:
                     floorTilemap.SetTile(new Vector3Int(x, y), tiles[(int)Tiles.Floor]);
                     wallTilemap.SetTile(new Vector3Int(x, y), null);
-                    playerTilemap.SetTile(new Vector3Int(x, y), null);
+                    entityTilemap.SetTile(new Vector3Int(x, y), null);
                     break;
 
                 case (int)Tiles.Wall:
@@ -122,7 +125,22 @@ namespace Murgn
 
                 case (int)Tiles.Player:
                     floorTilemap.SetTile(new Vector3Int(x, y), tiles[(int)Tiles.Floor]);
-                    playerTilemap.SetTile(new Vector3Int(x, y), tiles[(int)Tiles.Player]);
+                    entityTilemap.SetTile(new Vector3Int(x, y), tiles[(int)Tiles.Player]);
+                    break;
+                
+                case (int)Tiles.Enemy:
+                    floorTilemap.SetTile(new Vector3Int(x, y), tiles[(int)Tiles.Floor]);
+                    entityTilemap.SetTile(new Vector3Int(x, y), tiles[(int)Tiles.Enemy]);
+                    break;
+                
+                case (int)Tiles.Key:
+                    floorTilemap.SetTile(new Vector3Int(x, y), tiles[(int)Tiles.Floor]);
+                    entityTilemap.SetTile(new Vector3Int(x, y), tiles[(int)Tiles.Key]);
+                    break;
+                
+                case (int)Tiles.Exit:
+                    floorTilemap.SetTile(new Vector3Int(x, y), tiles[(int)Tiles.Floor]);
+                    entityTilemap.SetTile(new Vector3Int(x, y), tiles[(int)Tiles.Exit]);
                     break;
             }
         }
